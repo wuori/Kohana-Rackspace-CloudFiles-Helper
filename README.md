@@ -5,10 +5,13 @@ Simple helper to quickly use the Rackspace Cloudfiles API Wrapper within an exis
 Example Usage:
 
 // start session
+
 $rackspace = Helper_Rackspace::factory($config['username'],$config['api_key']);
 		
 // add file
+
 $rackspace->from_file($config['container'],$filepath,$filename);
 		
 // delete file
+
 $rackspace->delete_file($config['container'],$filepath,$filename);
