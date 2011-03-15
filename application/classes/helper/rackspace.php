@@ -7,10 +7,7 @@
 	 * Simple Helper to provide access to Rackspace Cloud API
 	 * Requires Rackspace API Wrapper from rackspacecloud.com
 	 * 
-	 * Note that the error exceptions provided by the Rackspace wrapper work well
-	 * So you can use those to provide more elaborate messages to user if needed.
-	 *
-	 * Example Usage:
+	 * 	Example Usage:
 	 *	# upload to rackspace cloudfiles
 	 *	# user helper/rackspace.php
 	 *	$rackspace = Helper_Rackspace::factory($config['username'],$config['api_key']);
@@ -75,9 +72,18 @@
 		 */
 		public function from_file($container,$filepath,$filename)
 		{
+			# init
 			$container = $this->conn->get_container($container);
-				
-			$file_object  = $container->create_object($filename);
+			$file_object = $container->create_object($filename);
+			
+			# purge this from the Edge if already exists to bypass the TTL
+			# at publish date, object only reaches CDN after "3 or so" requests
+			# as such, put this in a try as to avoid CloudFiles exception
+			try{ 
+				$file_object->purge_from_cdn();
+			} catch (Exception $e) {
+				//exit($e->getMessage()); 
+			}
 			
 			# insert mimetype as some php installs don't have the 
 			# fxns that the Rackspace API wrapper asks for (mime_content_type(), etc.)
@@ -98,17 +104,14 @@
 		 */
 		public function delete_file($container,$filepath,$filename)
 		{
-			
-			
+			# init
 			$container = $this->conn->get_container($container);
-			if($container){
-				$file_object  = $container->get_object($filename);
-				@$file_object->purge_from_cdn();
-				$container->delete_object($filename);
-				 true;
-				
-			}else{
-			}
+			
+			# use get_object so we don't die when object doesn't exist
+			$file_object  = $container->create_object($filename);
+			
+			# delete object
+			$container->delete_object($filename);
 		}
 				
 	}
