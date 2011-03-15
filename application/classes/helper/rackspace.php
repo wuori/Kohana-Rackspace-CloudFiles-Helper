@@ -7,6 +7,9 @@
 	 * Simple Helper to provide access to Rackspace Cloud API
 	 * Requires Rackspace API Wrapper from rackspacecloud.com
 	 * 
+	 * Note that the error exceptions provided by the Rackspace wrapper work well
+	 * So you can use those to provide more elaborate messages to user if needed.
+	 *
 	 * Example Usage:
 	 *	# upload to rackspace cloudfiles
 	 *	# user helper/rackspace.php
